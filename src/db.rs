@@ -1,7 +1,6 @@
 use rusqlite::Connection;
 
-const SQL_CODE: &str = "
-CREATE TABLE IF NOT EXISTS note (
+const SQL_CODE: &str = "CREATE TABLE IF NOT EXISTS note (
   id INTEGER PRIMARY KEY,
   title TEXT,
   content TEXT,
@@ -25,11 +24,20 @@ CREATE TABLE IF NOT EXISTS relation (
 
 pub fn init_db(path: &str) -> rusqlite::Result<()> {
     let conn = Connection::open(path)?;
-    conn.execute(SQL_CODE, ())?;
+    conn.execute_batch(SQL_CODE)?;
     Ok(())
-} 
+}
 
 pub fn connect_to_db(path: &str) -> rusqlite::Result<Connection> {
     let conn = Connection::open(path)?;
     Ok(conn)
+}
+
+pub trait Database {
+    type Model;
+
+    fn add_to_database(&self, conn: &Connection) -> rusqlite::Result<()>;
+    fn remove_from_database(id: i32, conn: &Connection) -> rusqlite::Result<()>;
+    fn get_from_database(id: i32, conn: &Connection) -> rusqlite::Result<Self::Model>;
+    fn list_all_from_database(conn: &Connection) -> rusqlite::Result<Vec<Self::Model>>;
 }
