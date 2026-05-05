@@ -21,7 +21,16 @@ impl Note {
         }
     }
 
-    pub fn display(&self) {
+    pub fn display(&self, extra_info: bool) {
+        if !extra_info {
+            println!(
+                "{} | {} | {}",
+                self.id.unwrap_or(0),
+                self.title.clone().unwrap_or(" ".into()),
+                self.content.clone().unwrap_or(" ".into())
+            );
+            return;
+        }
         println!(
             "ID: {}\nTitle: {}\nContent:\n{}\nModified At: {}\nCreated At: {}",
             self.id.unwrap_or(0),
